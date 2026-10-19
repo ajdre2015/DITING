@@ -13,17 +13,18 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5          # 升级到 v5 (Node 24)
 
       - name: Setup Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6           # 升级到 v6 (Node 24)
         with:
           go-version: '1.25'
+          cache-dependency-path: Desktop/go.sum   # 修复缓存路径
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5         # 升级到 v5 (Node 24)
         with:
-          node-version: '22'   # 升级到 22
+          node-version: '22'
 
       - name: Install Wails CLI
         run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
@@ -34,11 +35,8 @@ jobs:
       - name: Clean and install frontend dependencies
         working-directory: Desktop/frontend
         run: |
-          # 清理可能不完整的旧依赖，规避 npm 可选依赖 bug
           if (Test-Path node_modules) { Remove-Item -Recurse -Force node_modules }
           if (Test-Path package-lock.json) { Remove-Item -Force package-lock.json }
-          
-          # 显式安装 Windows 原生绑定，确保 Tailwind CSS 能正常工作
           npm install
           npm install @tailwindcss/oxide-win32-x64-msvc --save-dev
         shell: pwsh
@@ -49,7 +47,7 @@ jobs:
         shell: cmd
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5     # 升级到 v5 (Node 24)
         with:
           name: DITING-Windows
           path: Desktop/build/bin/DITING-release-v*.exe
